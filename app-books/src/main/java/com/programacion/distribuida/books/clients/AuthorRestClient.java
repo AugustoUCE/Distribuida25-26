@@ -9,18 +9,21 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import java.util.List;
-
+@ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/authors")
-
+@RegisterRestClient(configKey= "AuthorRestClient")
 public interface AuthorRestClient {
 
     @GET
     @Path("/find/{isbn}")
     List<AuthorDto> findbyBook(@PathParam("isbn") String isbn);
+
+
 
     
 }
