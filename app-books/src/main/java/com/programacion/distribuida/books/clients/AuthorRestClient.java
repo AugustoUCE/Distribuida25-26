@@ -1,4 +1,4 @@
-package com.programacion.distribuida.clients;
+package com.programacion.distribuida.books.clients;
 import com.programacion.distribuida.books.dto.AuthorDto;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
@@ -16,7 +16,7 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/authors")
-@RegisterRestClient(configKey= "AuthorRestClient")
+@RegisterRestClient(baseUri="stork.//authors-api")
 public interface AuthorRestClient {
 
     @GET

@@ -25,6 +25,7 @@ dependencies {
     implementation("io.quarkus:quarkus-rest")
     implementation("io.quarkus:quarkus-rest-jsonb")
 
+
     //DB
     implementation("io.quarkus:quarkus-hibernate-orm")
     implementation("io.quarkus:quarkus-hibernate-orm-panache")
@@ -34,6 +35,11 @@ dependencies {
     //REST Client
     implementation("io.quarkus:quarkus-rest-client")
     implementation("io.quarkus:quarkus-rest-client-jsonb")
+
+    //Service Discovery
+
+    implementation("io.quarkus:quarkus-smallrye-stork")
+   // implementation("io.smallrye.stork:stork-service-discovery-static-list:2.6.3")
 
 
 
