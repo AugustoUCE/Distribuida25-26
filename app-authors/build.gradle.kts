@@ -33,6 +33,21 @@ dependencies {
     implementation("io.quarkus:quarkus-hibernate-orm-panache")
     implementation("io.quarkus:quarkus-jdbc-postgresql")
 
+    //Service Discovery
+
+    implementation("io.quarkus:quarkus-smallrye-stork")
+    // implementation("io.smallrye.stork:stork-service-discovery-static-list:2.6.3")
+
+// Stork con Consul (service discovery)
+    implementation("io.smallrye.stork:stork-service-discovery-consul")
+
+// Cliente Vert.x para Consul + Mutiny
+    //implementation("io.smallrye.reactive:smallrye-mutiny-vertx-consul-client")
+    implementation("io.smallrye.reactive:smallrye-mutiny-vertx-consul-client")
+
+
+
+
 }
 
 tasks.withType<JavaCompile> {
