@@ -1,0 +1,17 @@
+# Gradle
+app-authors/.gradle/
+build/
+
+# IDEs
+*.iml
+.idea/
+*.class
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# JAR / EXE
+*.jar
+*.exe

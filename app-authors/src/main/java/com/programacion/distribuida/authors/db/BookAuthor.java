@@ -1,0 +1,20 @@
+package com.programacion.distribuida.authors.db;
+
+import jakarta.persistence.*;
+
+
+
+@Entity
+@Table(name="books_authors")
+public class BookAuthor {
+
+    @EmbeddedId
+    private BookAuthorId id;
+
+    @ManyToOne
+    @MapsId("authorId")
+    @JoinColumn(name="authors_id",nullable=false)
+    private Author author;
+
+
+}

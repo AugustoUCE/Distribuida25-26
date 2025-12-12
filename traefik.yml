@@ -1,0 +1,15 @@
+api:
+  insecure: true
+  dashboard: true
+
+entryPoints:
+  http:
+    address: ":80"
+
+  traefik:
+    address: ":8888"
+
+providers:
+  consulCatalog:
+    endpoint:
+      address: "127.0.0.1:8500"
