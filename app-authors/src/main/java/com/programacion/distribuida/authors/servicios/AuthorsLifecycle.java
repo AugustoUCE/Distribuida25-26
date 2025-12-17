@@ -1,5 +1,6 @@
 package com.programacion.distribuida.authors.servicios;
 
+import com.arjuna.ats.internal.jdbc.drivers.modifiers.list;
 import io.quarkus.runtime.StartupEvent;
 import io.vertx.ext.consul.CheckOptions;
 import io.vertx.ext.consul.ConsulClientOptions;
@@ -12,6 +13,7 @@ import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.net.InetAddress;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -52,14 +54,31 @@ public class AuthorsLifecycle {
                 .setDeregisterAfter("10s")
                 ;
 
+//        var tags = List.of(
+//                "traefik.enable=true",
+//                "traefik.http.routers.authors.rule=PathPrefix(`/app-authors`)",
+//                "traefik.http.middlewaresauthors-stripprefix.stripPrefix.prefixes=/app-authors",
+//                "traefik.http.routers.authors.middlewares=authors-stripprefix"
+//
+//
+//        );
+
+            var tags = List.of(
+                    "traefik.enable=true",
+                    "traefik.http.routers.authors.rule=PathPrefix(`/app-authors`)",
+                    "traefik.http.middlewares.authors-stripprefix.stripPrefix.prefixes=/app-authors",
+                    "traefik.http.routers.authors.middlewares=authors-stripprefix"
+            );
         ServiceOptions serviceOptions = new ServiceOptions()
                 .setName("app-autor 1")
                 .setId(serviceId)
                 .setAddress("127.0.0.1")
                 .setPort(appPort)
                 .setCheckOptions(checkOptions)
-
+                .setTags(tags)
                 ;
+
+
 
 
         consulClient.registerService(serviceOptions).subscribe().with(
