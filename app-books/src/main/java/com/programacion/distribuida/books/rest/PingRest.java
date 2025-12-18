@@ -1,4 +1,4 @@
-package com.programacion.distribuida.authors.rest;
+package com.programacion.distribuida.books.rest;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

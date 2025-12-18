@@ -72,7 +72,7 @@ public class AuthorsLifecycle {
         ServiceOptions serviceOptions = new ServiceOptions()
                 .setName("app-autor 1")
                 .setId(serviceId)
-                .setAddress("127.0.0.1")
+                .setAddress(ipAddress)
                 .setPort(appPort)
                 .setCheckOptions(checkOptions)
                 .setTags(tags)

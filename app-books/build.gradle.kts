@@ -41,14 +41,12 @@ dependencies {
     implementation("io.quarkus:quarkus-smallrye-stork")
    // implementation("io.smallrye.stork:stork-service-discovery-static-list:2.6.3")
 
-//// Stork con Consul (service discovery)
-//    implementation("io.smallrye.stork:stork-service-discovery-consul")
-//
-//// Cliente Vert.x para Consul + Mutiny
-//    implementation("io.smallrye.reactive:smallrye-mutiny-vertx-consul-client")
+// Stork con Consul (service discovery)
+    implementation("io.smallrye.stork:stork-service-discovery-consul")
 
-
-
+// Cliente Vert.x para Consul + Mutiny
+    //implementation("io.smallrye.reactive:smallrye-mutiny-vertx-consul-client")
+    implementation("io.smallrye.reactive:smallrye-mutiny-vertx-consul-client")
 
 
 }
