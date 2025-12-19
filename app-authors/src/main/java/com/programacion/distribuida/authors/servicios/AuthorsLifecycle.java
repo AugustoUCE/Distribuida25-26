@@ -1,6 +1,6 @@
 package com.programacion.distribuida.authors.servicios;
 
-import com.arjuna.ats.internal.jdbc.drivers.modifiers.list;
+import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import io.vertx.ext.consul.CheckOptions;
 import io.vertx.ext.consul.ConsulClientOptions;
@@ -22,28 +22,32 @@ public class AuthorsLifecycle {
     @Inject
     @ConfigProperty(name = "consul.host", defaultValue = "127.0.0.1")
     String consulHost;
+    
     @Inject
     @ConfigProperty(name = "consul.port", defaultValue = "8500")
     Integer consulPort;
+    
     @Inject
     Vertx vertx;
 
     @Inject
     @ConfigProperty(name="quarkus.http.port" ,  defaultValue = "8070")
     Integer appPort;
+    
     String serviceId;
+    ConsulClient consulClient;
 
 
 
     public void init(@Observes StartupEvent event, Vertx vertx) {
-        System.out.println("*****AuthorsLifecycle.init()");
+        System.out.println("*****AuthorsLifecycle.init() - Registrando servicio en Consul");
         System.out.println(vertx);
         try{
         ConsulClientOptions options = new ConsulClientOptions()
                         .setHost(consulHost)
                         .setPort(consulPort);
 
-        ConsulClient consulClient = ConsulClient.create(vertx, options);
+        this.consulClient = ConsulClient.create(vertx, options);
 
         serviceId= UUID.randomUUID().toString();
         var ipAddress= InetAddress.getLocalHost().getHostAddress();
@@ -70,7 +74,7 @@ public class AuthorsLifecycle {
                     "traefik.http.routers.authors.middlewares=authors-stripprefix"
             );
         ServiceOptions serviceOptions = new ServiceOptions()
-                .setName("app-autor 1")
+                .setName("app-authors")
                 .setId(serviceId)
                 .setAddress(ipAddress)
                 .setPort(appPort)
@@ -78,16 +82,23 @@ public class AuthorsLifecycle {
                 .setTags(tags)
                 ;
 
-
-
-
         consulClient.registerService(serviceOptions).subscribe().with(
-                ok -> System.out.println("Servicio registrado en Consul"),
-                err -> System.out.println("ERROR registrando: " + err));
+                ok -> System.out.println("✓ Servicio app-authors registrado en Consul"),
+                err -> System.out.println("✗ ERROR registrando app-authors: " + err));
 
         }
         catch(Exception e){
+            System.err.println("Error en AuthorsLifecycle.init(): ");
             e.printStackTrace();
+        }
+    }
+
+    public void shutdown(@Observes ShutdownEvent event) {
+        System.out.println("*****AuthorsLifecycle.shutdown() - Desregistrando servicio");
+        if (consulClient != null && serviceId != null) {
+            consulClient.deregisterService(serviceId).subscribe().with(
+                    ok -> System.out.println("✓ Servicio app-authors desregistrado de Consul"),
+                    err -> System.out.println("✗ ERROR desregistrando app-authors: " + err));
         }
     }
 }

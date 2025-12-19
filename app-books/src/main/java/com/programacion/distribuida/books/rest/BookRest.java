@@ -24,12 +24,15 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.logging.Logger;
 
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/books")
 @ApplicationScoped
 public class BookRest {
+
+    private static final Logger LOG = Logger.getLogger(BookRest.class);
 
     @Inject
     BookRepository bookRepository;
@@ -39,22 +42,13 @@ public class BookRest {
     AuthorRestClient client;
 
 
-
-//    @PostConstruct
-//    public void init() {
-//        var authorsServer = "http://localhost:8070";
-//        client = RestClientBuilder.newBuilder()
-//                .baseUri(authorsServer)
-//                .build(AuthorRestClient.class);
-//    }
-
     // Devuelve un libro por ISBN con autores
     @GET
     @Path("/{isbn}")
     public Response findByIsbn(@PathParam("isbn") String isbn){
         return bookRepository.findByIdOptional(isbn)
                 .map(book -> {
-                    var authors = client.findbyBook(isbn);
+                    var authors = safeFindAuthors(isbn);
                     var dto = toDto(book, authors);
                     return Response.ok(dto).build();
                 })
@@ -66,7 +60,7 @@ public class BookRest {
     public List<BookDto> findAll() {
         return bookRepository.listAll().stream()
                 .map(book -> {
-                    var authors = client.findbyBook(book.getIsbn());
+                    var authors = safeFindAuthors(book.getIsbn());
                     return toDto(book, authors);
                 })
                 .toList();
@@ -87,37 +81,15 @@ public class BookRest {
         return dto;
     }
 
-//    public Response test() {
-//        var stork = Stork.getInstance();
-//        Map<String, Service> services = stork.getServices();
-//
-//        services.entrySet()
-//                .stream()
-//                .forEach(
-//                        it -> {
-//                            String key = it.getKey();
-//                            Service service = it.getValue();
-//                            System.out.println("--group" + key);
-//                            Multi<ServiceInstance> instancias = service.getInstances()
-//                                    .onItem()
-//                                    .transformToMulti(items -> Multi.createFrom().iterable(items));
-//
-//                            instancias.subscribe()
-//                                    .with(item -> {
-//                                        System.out.println(" " + item.getHost() + "  " + item.getPort());
-//                                    });
-//
-//                        }
-//                        );
-//        //buscar un serviceio seleccionar isntancias, balancear
-//
-////        Service service =stork.getService("authors-api");
-////        List<ServiceInstance> instancias = service.getInstances().await().indefinitely();
-////
-////        int curIndex = index.getAndIncrement()% instancias.size();
-////        var instancia = instancias.get(curIndex);
-////        System.out.println("inovando auhtors -api"+instancia.getHost()+":"+ instancia.getPort());
-////        return Response.ok("ok").build();
-//
-//    }
+    // Si authors-api no está disponible, retornamos lista vacía para no romper /books ni /books/{isbn}
+    private List<AuthorDto> safeFindAuthors(String isbn) {
+        try {
+            return client.findbyBook(isbn);
+        } catch (Exception ex) {
+            LOG.warnf(ex, "No se pudo obtener autores para ISBN %s (authors-api no disponible)", isbn);
+            return List.of();
+        }
+    }
+
+
 }
